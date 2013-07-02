@@ -483,9 +483,9 @@ def emscript(infile, settings, outfile, libraries=[], compiler_engine=None,
     if settings.get('MAIN_MODULE') or settings.get('SIDE_MODULE'):
       for key, value in forwarded_json['Variables']['globals'].iteritems():
         if value.get('linkable'):
-          init = str(forwarded_json['Variables']['indexedGlobals'][key])
-          if settings.get('SIDE_MODULE'): init = '(H_BASE+' + init + ')|0'
-          asm_global_vars += '  var %s=%s;\n' % (key, init)
+          init = forwarded_json['Variables']['indexedGlobals'][key] + 8 # 8 is Runtime.GLOBAL_BASE / STATIC_BASE
+          if settings.get('SIDE_MODULE'): init = '(H_BASE+' + str(init) + ')|0'
+          asm_global_vars += '  var %s=%s;\n' % (key, str(init))
 
     # sent data
     the_global = '{ ' + ', '.join(['"' + math_fix(s) + '": ' + s for s in fundamentals]) + ' }'
